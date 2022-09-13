@@ -1,0 +1,11 @@
+.vscode
+.mypy_cache
+__pycache__
+venv
+.webassets-cache
+dst
+redis_data
+postgres_data
+**.env
+rabbitmq
+test.db
