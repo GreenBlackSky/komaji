@@ -54,7 +54,7 @@ def user_response():
     ids=["create user", "create duplicate user"],
 )
 async def test_register(case: TestCase):
-    await base_test("/register", case)
+    await base_test("/register", "POST", case)
 
 
 # wrong_password
@@ -73,7 +73,7 @@ async def test_register(case: TestCase):
     ids=["normal login"],
 )
 async def test_login(case: TestCase):
-    await base_test("/login", case)
+    await base_test("/login", "POST", case)
 
 
 def change_name_request():
@@ -130,7 +130,7 @@ def changed_name_db():
     ids=["change name"],
 )
 async def test_edit_user(case: TestCase):
-    await base_test("/edit_user", case)
+    await base_test("/edit_user", "PUT", case)
 
 
 @pytest.mark.parametrize(
@@ -147,4 +147,4 @@ async def test_edit_user(case: TestCase):
     ids=["simple get data"],
 )
 async def test_get_user_data(case: TestCase):
-    await base_test("/get_user_data", case)
+    await base_test("/get_user_data", "GET", case)

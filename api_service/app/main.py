@@ -29,13 +29,14 @@ def get_config():
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
     return JSONResponse(
-        status_code=exc.status_code, content={"detail": exc.message}
+        status_code=exc.status_code,
+        content={"detail": exc.message, "request": str(request)},
     )
 
 
 @app.exception_handler(LogicException)
 def logic_exception_handler(request: Request, exc: LogicException):
-    return JSONResponse({"status": str(exc)})
+    return JSONResponse({"status": str(exc), "request": str(request)})
 
 
 app.add_middleware(

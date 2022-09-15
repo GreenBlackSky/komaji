@@ -101,12 +101,16 @@ def set_current_user(app: FastAPI, user: UserModel | None):
         app.dependency_overrides.pop(authorized_user, None)
 
 
-async def base_test(path, case: TestCase):
+async def base_test(path: str, method_name: str, case: TestCase):
     response_data, result_code = case.response_data
     with set_current_user(app, case.user):
         await prepare_db(**case.db_before)
         async with AsyncClient(app=app, base_url="http://test") as ac:
-            response = await ac.post(path, json=case.request_data)
+            method = {"POST": ac.post, "GET": ac.get, "PUT": ac.put}[method_name]
+            if case.request_data:
+                response = await method(path, json=case.request_data)
+            else:
+                response = await method(path)
         assert response.status_code == result_code, response.text
         data = response.json()
         assert compare_with_skip(
