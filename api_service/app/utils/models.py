@@ -5,7 +5,15 @@ import datetime as dt
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime, BigInteger
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    DateTime,
+    BigInteger,
+)
+from sqlalchemy.orm import relationship
 
 
 Base = declarative_base()
@@ -41,8 +49,27 @@ class UserModel(Base, Serializable):
     )
     name = Column(String(200), nullable=False)
     password_hash = Column(String(500), nullable=False)
+    notes = relationship("NoteModel")
 
     def to_dict_safe(self):
         user_data = super().to_dict()
         del user_data["password_hash"]
         return user_data
+
+
+class NoteModel(Base, Serializable):
+    "DB model for note."
+
+    __tablename__ = "notes"
+
+    id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+        autoincrement=True,
+    )
+
+    user_id = Column(
+        BigInteger().with_variant(Integer, "sqlite"), ForeignKey("users.id")
+    )
+    text = Column(String(2000), nullable=False)
