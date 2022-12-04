@@ -1,4 +1,4 @@
-# """Logging in and co tests."""
+"""Logging in and co tests."""
 
 import pytest
 
@@ -147,4 +147,4 @@ async def test_edit_user(case: TestCase):
     ids=["simple get data"],
 )
 async def test_get_user_data(case: TestCase):
-    await base_test("/get_user_data", "GET", case)
+    await base_test("/user_data", "GET", case)

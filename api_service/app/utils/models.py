@@ -2,22 +2,18 @@
 
 import datetime as dt
 
-from sqlalchemy import desc, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
     Column,
     ForeignKey,
     Integer,
     String,
-    DateTime,
     BigInteger,
 )
 from sqlalchemy.orm import relationship
 
 
 Base = declarative_base()
-
 
 class Serializable:
     def to_dict(self):

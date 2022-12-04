@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 class NoteRequest(BaseModel):
-    text:str
+    text: str
 
 
 @router.post("/create_note")
@@ -40,7 +40,7 @@ async def create_note(
     }
 
 
-@router.get("/get_notes")
+@router.get("/notes")
 async def get_notes(
     user: UserModel = Depends(authorized_user),
     async_session: sessionmaker = Depends(get_session),
@@ -59,7 +59,7 @@ async def get_notes(
 @router.put("/edit_note/{note_id}")
 async def edit_note(
     note_id: int,
-    note_request: NoteModel,
+    note_request: NoteRequest,
     current_user: UserModel = Depends(authorized_user),
     async_session: sessionmaker = Depends(get_session),
 ):
@@ -76,7 +76,7 @@ async def edit_note(
     return {"status": "OK", "user": note.to_dict()}
 
 
-@router.delete("/delete_note{note_id}")
+@router.delete("/delete_note/{note_id}")
 async def delete_note(
     note_id: int,
     current_user: UserModel = Depends(authorized_user),

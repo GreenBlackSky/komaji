@@ -9,3 +9,4 @@ postgres_data
 **.env
 rabbitmq
 test.db
+api_service/app/migration/versions/

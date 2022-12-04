@@ -11,6 +11,7 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseSettings
 
 from . import user
+from . import note
 from .utils.exceptions import LogicException
 
 
@@ -49,3 +50,4 @@ app.add_middleware(
 
 
 app.include_router(user.router)
+app.include_router(note.router)

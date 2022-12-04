@@ -71,8 +71,8 @@ async def prepare_db(**values):
     for table_name, objects in values.items():
         for object_data in objects:
             obj = db_models[table_name](**object_data)
-            if "event_time" in object_data:
-                obj.event_time = dt.datetime.fromtimestamp(obj.event_time)
+            # if "event_time" in object_data:
+            #     obj.event_time = dt.datetime.fromtimestamp(obj.event_time)
             to_add.append(obj)
 
     async with async_session() as session:

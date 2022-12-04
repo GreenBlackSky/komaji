@@ -62,11 +62,12 @@ async def register(
         )
         session.add(user)
         await session.commit()
+        user_dict = user.to_dict_safe()
 
     return {
         "access_token": authorize.create_access_token(subject=user.id),
         "status": "OK",
-        "user": user.to_dict_safe(),
+        "user": user_dict,
     }
 
 
@@ -102,7 +103,7 @@ async def login(
     }
 
 
-@router.get("/get_user_data")
+@router.get("/user_data")
 async def get_user_data(user: UserModel = Depends(authorized_user)):
     return {"status": "OK", "user": user.to_dict_safe()}
 
