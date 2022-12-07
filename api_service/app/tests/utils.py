@@ -86,7 +86,7 @@ async def get_db():
         for table_name, model in db_models.items():
             rows = await session.execute(select(model))
             result[table_name] = [
-                entity.to_dict() for entity in rows.scalars()
+                entity.to_dict_raw() for entity in rows.scalars()
             ]
     return result
 

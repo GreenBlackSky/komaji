@@ -62,7 +62,7 @@ async def register(
         )
         session.add(user)
         await session.commit()
-        user_dict = user.to_dict_safe()
+        user_dict = user.to_dict()
 
     return {
         "access_token": authorize.create_access_token(subject=user.id),
@@ -98,14 +98,14 @@ async def login(
 
     return {
         "status": "OK",
-        "user": user.to_dict_safe(),
+        "user": user.to_dict(),
         "access_token": authorize.create_access_token(subject=user.id),
     }
 
 
 @router.get("/user_data")
 async def get_user_data(user: UserModel = Depends(authorized_user)):
-    return {"status": "OK", "user": user.to_dict_safe()}
+    return {"status": "OK", "user": user.to_dict()}
 
 
 class EditUserRequest(BaseModel):
@@ -148,7 +148,7 @@ async def edit_user(
 
         await session.commit()
 
-    return {"status": "OK", "user": current_user.to_dict_safe()}
+    return {"status": "OK", "user": current_user.to_dict()}
 
 
 @router.post("/logout")

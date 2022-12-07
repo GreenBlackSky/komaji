@@ -1,7 +1,5 @@
 """Data base models."""
 
-import datetime as dt
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
     Column,
@@ -16,20 +14,11 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 class Serializable:
-    def to_dict(self):
-        return {
-            key: (
-                value.timestamp()
-                if isinstance(value := getattr(self, key), dt.datetime)
-                else value
-            )
-            for key in dir(self)
-            if (
-                not key.startswith("_")
-                and key
-                not in ("to_dict_safe", "to_dict", "metadata", "registry")
-            )
-        }
+    def to_dict(self) -> dict:
+        raise NotImplementedError
+
+    def to_dict_raw(self) -> dict:
+        raise NotImplementedError
 
 
 class UserModel(Base, Serializable):
@@ -45,12 +34,20 @@ class UserModel(Base, Serializable):
     )
     name = Column(String(200), nullable=False)
     password_hash = Column(String(500), nullable=False)
-    notes = relationship("NoteModel")
+    notes = relationship("NoteModel", back_populates="user", cascade="all, delete")
 
-    def to_dict_safe(self):
-        user_data = super().to_dict()
-        del user_data["password_hash"]
-        return user_data
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
+    def to_dict_raw(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "password_hash": self.password_hash
+        }
 
 
 class NoteModel(Base, Serializable):
@@ -69,3 +66,14 @@ class NoteModel(Base, Serializable):
         BigInteger().with_variant(Integer, "sqlite"), ForeignKey("users.id")
     )
     text = Column(String(2000), nullable=False)
+    user = relationship("UserModel", back_populates="notes")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "text": self.text, 
+        }
+
+    def to_dict_raw(self):
+        return self.to_dict()
