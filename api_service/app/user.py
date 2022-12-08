@@ -122,7 +122,11 @@ async def edit_user(
 ):
     """Edit user."""
     session: AsyncSession
-    async with async_session() as session:
+    async with async_session() as session:        
+
+        if md5(user_data.old_pass.encode()).hexdigest() != current_user.password_hash:
+            raise LogicException("wrong password")
+
         if user_data.name != current_user.name:
             query = await session.execute(
                 select(UserModel).where(UserModel.name == user_data.name)
@@ -130,21 +134,13 @@ async def edit_user(
             if query.first():
                 raise LogicException("user exists")
 
-        current_user.name = user_data.name
+        user = await session.get(UserModel, current_user.id)
 
-        got_old_pass = user_data.old_pass is not None
-        got_new_pass = user_data.new_pass is not None
-        if got_new_pass != got_old_pass:
-            raise LogicException(
-                "new password must be provided with an old password"
-            )
-
-        if got_old_pass and got_new_pass:
-            old_hash = md5(user_data.old_pass.encode()).hexdigest()
-            if old_hash != current_user.password_hash:
-                raise LogicException("wrong password")
-            new_hash = md5(user_data.new_pass.encode()).hexdigest()
-            current_user.password_hash = new_hash
+        if user_data.name != current_user.name:
+            user.name = user_data.name
+        
+        if user_data.new_pass != "":
+            user.password_hash = md5(user_data.new_pass.encode()).hexdigest()
 
         await session.commit()
 
